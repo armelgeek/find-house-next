@@ -124,26 +124,22 @@ jobs:
             sudo certbot --nginx -d $SUBDOMAIN_API.$DOMAIN --non-interactive --agree-tos -m votremail@arvox.dev
             # Génération du certificat SSL (décommentez pour activer)
             sudo certbot --nginx -d ${{ secrets.SUBDOMAIN }}.${{ secrets.DOMAIN }} --non-interactive --agree-tos -m votremail@arvox.dev
-<<<<<<< Updated upstream
-
       - name: Préparation du dossier client
         run: |
-          cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+          cd /var/www/$SUBDOMAIN/client/
           rm -rf node_modules yarn.lock package-lock.json tsconfig.json next-env.d.ts
           rm -rf .next
           rm -rf build
 
       - name: Install & Build Next.js
         run: |
-          cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+          cd /var/www/$SUBDOMAIN/client/
           npm install --legacy-peer-deps
           npm run build
 
       - name: Démarrer Next.js avec PM2
         run: |
-          cd /var/www/${{ secrets.SUBDOMAIN }}/client/
-          pm2 delete "${{ secrets.SUBDOMAIN }}" || true
-          pm2 start npm --name "nextjs-${{ secrets.SUBDOMAIN }}" -- run start -- -p $PORT
+          cd /var/www/$SUBDOMAIN/client/
+          pm2 delete "$SUBDOMAIN" || true
+          pm2 start npm --name "nextjs-$SUBDOMAIN" -- run start -- -p $PORT
           pm2 save
-=======
->>>>>>> Stashed changes
