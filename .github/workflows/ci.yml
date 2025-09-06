@@ -124,8 +124,6 @@ jobs:
             sudo certbot --nginx -d $SUBDOMAIN_API.$DOMAIN --non-interactive --agree-tos -m votremail@arvox.dev
             # Génération du certificat SSL (décommentez pour activer)
             sudo certbot --nginx -d ${{ secrets.SUBDOMAIN }}.${{ secrets.DOMAIN }} --non-interactive --agree-tos -m votremail@arvox.dev
-<<<<<<< Updated upstream
-
       - name: Préparation du dossier client
         run: |
           cd /var/www/$SUBDOMAIN/client/
@@ -145,5 +143,3 @@ jobs:
           pm2 delete "$SUBDOMAIN" || true
           pm2 start npm --name "nextjs-$SUBDOMAIN" -- run start -- -p $PORT
           pm2 save
-=======
->>>>>>> Stashed changes
