@@ -43,11 +43,20 @@ jobs:
             export PORT_API=8055
 
           
+            # Donner la propriété à votre utilisateur
+            sudo chown -R $USER:$USER /var/www
+
+            # Ou donner la propriété au serveur web
+            sudo chown -R www-data:www-data /var/www
+
+            # Définir les permissions appropriées
+            sudo chmod -R 755 /var/www
+            
             # Déploiement Directus (via Docker Compose)
             cd /var/www/$SUBDOMAIN/client/database/
             sudo chown -R $USER:www-data /var/www/$SUBDOMAIN/client/database/
             sudo chmod -R 775 /var/www/$SUBDOMAIN/client/database/
-            docker compose up -d --build
+            sudo docker compose up -d --build
             
 
             # Configuration Nginx pour Directus API (création si absent)
