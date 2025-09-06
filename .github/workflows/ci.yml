@@ -44,7 +44,7 @@ jobs:
 
           
             # Déploiement Directus (via Docker Compose)
-            cd /var/www/$SUBDOMAIN/database/
+            cd /var/www/$SUBDOMAIN/client/database/
             docker compose up -d --build
 
             # Configuration Nginx pour Directus API (création si absent)
