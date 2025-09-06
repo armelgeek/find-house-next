@@ -42,38 +42,10 @@ jobs:
             export PORT=${{ secrets.PORT }}
             export PORT_API=8055
 
-            # Déploiement Next.js (client)
-            cd /var/www/$SUBDOMAIN/client/
-            rm -rf node_modules yarn.lock package-lock.json tsconfig.json next-env.d.ts
-            rm -rf .next
-            rm -rf build
-            npm install --legacy-peer-deps
-            npm run build
-            pm2 restart $SUBDOMAIN || pm2 start npm --name $SUBDOMAIN -- run start
-
-
+          
             # Déploiement Directus (via Docker Compose)
             cd /var/www/$SUBDOMAIN/database/
             docker compose up -d --build
-
-
-
-            # Configuration Nginx pour Next.js (création si absent)
-            if [ ! -f /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf ]; then
-              sudo bash -c "cat > /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf <<EOF
-            server {
-              listen 80;
-              server_name $SUBDOMAIN.$DOMAIN;
-              location / {
-                proxy_pass http://localhost:$PORT;
-                proxy_set_header Host \$host;
-                proxy_set_header X-Real-IP \$remote_addr;
-                proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto \$scheme;
-              }
-            }
-            EOF"
-            fi
 
             # Configuration Nginx pour Directus API (création si absent)
             if [ ! -f /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf ]; then
