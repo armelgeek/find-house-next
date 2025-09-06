@@ -42,7 +42,7 @@ jobs:
             export PORT=${{ secrets.PORT }}
             export PORT_API=8055
 
-          
+
             # Donner la propriété à votre utilisateur
             sudo chown -R $USER:$USER /var/www
 
@@ -51,14 +51,20 @@ jobs:
 
             # Définir les permissions appropriées
             sudo chmod -R 755 /var/www
-            
+
             # Déploiement Directus (via Docker Compose)
             cd /var/www/$SUBDOMAIN/client/database/
             sudo chown -R $USER:www-data /var/www/$SUBDOMAIN/client/database/
             sudo chmod -R 775 /var/www/$SUBDOMAIN/client/database/
             docker compose up -d --build
-            
 
+
+            # Préparation du dossier client
+            cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+
+            rm -rf node_modules yarn.lock package-lock.json tsconfig.json next-env.d.ts
+            rm -rf .next
+            rm -rf build
             # Configuration Nginx pour Directus API (création si absent)
             if [ ! -f /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf ]; then
               sudo bash -c "cat > /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf <<EOF
@@ -93,16 +99,32 @@ jobs:
             EOF"
             fi
 
+            #Install & Build Next.js
+            cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+            npm install --legacy-peer-deps
+            npm run build
+
+            #Démarrer Next.js avec PM2
+
+            cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+            pm2 delete "${{ secrets.SUBDOMAIN }}" || true
+            pm2 start npm --name "nextjs-${{ secrets.SUBDOMAIN }}" -- run start -- -p $PORT
+            pm2 save
+
+
             # Activation des sites
             sudo ln -sf /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf /etc/nginx/sites-enabled/
             sudo ln -sf /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf /etc/nginx/sites-enabled/
             sudo systemctl reload nginx
+
+
 
             # Certificats SSL automatiques (décommentez si nécessaire)
             sudo certbot --nginx -d $SUBDOMAIN.$DOMAIN --non-interactive --agree-tos -m votremail@arvox.dev
             sudo certbot --nginx -d $SUBDOMAIN_API.$DOMAIN --non-interactive --agree-tos -m votremail@arvox.dev
             # Génération du certificat SSL (décommentez pour activer)
             sudo certbot --nginx -d ${{ secrets.SUBDOMAIN }}.${{ secrets.DOMAIN }} --non-interactive --agree-tos -m votremail@arvox.dev
+<<<<<<< Updated upstream
 
       - name: Préparation du dossier client
         run: |
@@ -123,3 +145,5 @@ jobs:
           pm2 delete "${{ secrets.SUBDOMAIN }}" || true
           pm2 start npm --name "nextjs-${{ secrets.SUBDOMAIN }}" -- run start -- -p $PORT
           pm2 save
+=======
+>>>>>>> Stashed changes
