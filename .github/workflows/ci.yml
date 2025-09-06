@@ -76,6 +76,23 @@ jobs:
             EOF"
             fi
 
+            # Configuration Nginx pour Next.js (création si absent)
+            if [ ! -f /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf ]; then
+              sudo bash -c "cat > /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf <<EOF
+            server {
+              listen 80;
+              server_name $SUBDOMAIN.$DOMAIN;
+              location / {
+                proxy_pass http://localhost:$PORT;
+                proxy_set_header Host \$host;
+                proxy_set_header X-Real-IP \$remote_addr;
+                proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto \$scheme;
+              }
+            }
+            EOF"
+            fi
+
             # Activation des sites
             sudo ln -sf /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf /etc/nginx/sites-enabled/
             sudo ln -sf /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf /etc/nginx/sites-enabled/
@@ -86,3 +103,23 @@ jobs:
             sudo certbot --nginx -d $SUBDOMAIN_API.$DOMAIN --non-interactive --agree-tos -m votremail@arvox.dev
             # Génération du certificat SSL (décommentez pour activer)
             sudo certbot --nginx -d ${{ secrets.SUBDOMAIN }}.${{ secrets.DOMAIN }} --non-interactive --agree-tos -m votremail@arvox.dev
+
+      - name: Préparation du dossier client
+        run: |
+          cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+          rm -rf node_modules yarn.lock package-lock.json tsconfig.json next-env.d.ts
+          rm -rf .next
+          rm -rf build
+
+      - name: Install & Build Next.js
+        run: |
+          cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Démarrer Next.js avec PM2
+        run: |
+          cd /var/www/${{ secrets.SUBDOMAIN }}/client/
+          pm2 delete "${{ secrets.SUBDOMAIN }}" || true
+          pm2 start npm --name "nextjs-${{ secrets.SUBDOMAIN }}" -- run start -- -p $PORT
+          pm2 save
