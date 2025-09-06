@@ -99,7 +99,7 @@ export const options: NextAuthOptions = {
             tokenIsRefreshed: true,
           };
           return resultToken;
-        } catch (error) {
+        } catch {
           return { ...token, error: "RefreshAccessTokenError" as const };
         }
       }

@@ -1,21 +1,12 @@
 
 
 "use client";
-import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { useLogin } from "@/shared/hooks/use-login";
 import Link from "next/link";
 
 export default function Home() {
   const { data: session, status } = useSession();
-  const { login, isLoading, error } = useLogin();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await login({ email, password });
-  };
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-8 gap-6">

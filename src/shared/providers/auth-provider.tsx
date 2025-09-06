@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { SessionProvider, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// ...existing code...
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthStore } from "../stores/auth";
