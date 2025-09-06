@@ -46,6 +46,8 @@ jobs:
             # Déploiement Directus (via Docker Compose)
             cd /var/www/$SUBDOMAIN/client/database/
             docker compose up -d --build
+            sudo chown -R $USER:www-data /var/www/$SUBDOMAIN/client/database/
+            sudo chmod -R 775 /var/www/$SUBDOMAIN/client/database/
 
             # Configuration Nginx pour Directus API (création si absent)
             if [ ! -f /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf ]; then
