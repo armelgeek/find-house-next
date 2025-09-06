@@ -1,0 +1,272 @@
+
+erDiagram
+    USERS {
+        int user_id PK
+        string first_name
+        string last_name
+        string email UK
+        string phone
+        string password_hash
+        enum user_type "buyer,seller,agent,admin"
+        text bio
+        string profile_image
+        datetime created_at
+        datetime updated_at
+        boolean is_active
+        datetime last_login
+    }
+
+    AGENTS {
+        int agent_id PK
+        int user_id FK
+        string license_number UK
+        string company_name
+        string office_address
+        string office_phone
+        text specializations
+        decimal commission_rate
+        int years_experience
+        boolean verified
+        datetime verified_at
+    }
+
+    PROPERTIES {
+        int property_id PK
+        int agent_id FK
+        int city_id FK
+        string title
+        text description
+        enum property_type "house,apartment,condo,villa,townhouse,land"
+        enum listing_type "sale,rent"
+        decimal price
+        decimal original_price
+        string address
+        string zip_code
+        string state
+        string country
+        decimal latitude
+        decimal longitude
+        int bedrooms
+        int bathrooms
+        int floor_area
+        int lot_size
+        int year_built
+        boolean garage
+        int garage_spaces
+        boolean pool
+        boolean garden
+        boolean furnished
+        text amenities
+        enum status "active,sold,rented,pending,draft"
+        datetime listed_date
+        datetime sold_date
+        int views_count
+        boolean featured
+        datetime created_at
+        datetime updated_at
+    }
+
+    CITIES {
+        int city_id PK
+        string name
+        string state
+        string country
+        decimal latitude
+        decimal longitude
+        text description
+    }
+
+   
+    PROPERTY_IMAGES {
+        int image_id PK
+        int property_id FK
+        string image_url
+        string alt_text
+        boolean is_primary
+        int sort_order
+        datetime uploaded_at
+    }
+
+    PROPERTY_FEATURES {
+        int feature_id PK
+        string feature_name UK
+        string feature_icon
+        boolean is_active
+    }
+
+    PROPERTY_FEATURE_MAPPING {
+        int property_id FK
+        int feature_id FK
+        string feature_value
+    }
+
+    FAVORITES {
+        int favorite_id PK
+        int user_id FK
+        int property_id FK
+        datetime created_at
+    }
+
+    INQUIRIES {
+        int inquiry_id PK
+        int property_id FK
+        int user_id FK
+        string name
+        string email
+        string phone
+        text message
+        enum inquiry_type "viewing,info,offer"
+        enum status "new,contacted,scheduled,closed"
+        datetime inquiry_date
+        datetime response_date
+    }
+
+    VIEWINGS {
+        int viewing_id PK
+        int property_id FK
+        int user_id FK
+        int agent_id FK
+        datetime scheduled_date
+        enum status "scheduled,completed,cancelled,rescheduled"
+        text notes
+        datetime created_at
+        datetime updated_at
+    }
+
+    OFFERS {
+        int offer_id PK
+        int property_id FK
+        int user_id FK
+        decimal offer_amount
+        text terms
+        datetime offer_date
+        datetime expiry_date
+        enum status "pending,accepted,rejected,countered,withdrawn"
+        text agent_notes
+        datetime response_date
+    }
+
+    TRANSACTIONS {
+        int transaction_id PK
+        int property_id FK
+        int buyer_id FK
+        int seller_id FK
+        int agent_id FK
+        decimal final_price
+        decimal commission_amount
+        datetime transaction_date
+        datetime closing_date
+        enum payment_method "cash,mortgage,financing"
+        text notes
+        enum status "pending,completed,cancelled"
+    }
+
+    REVIEWS {
+        int review_id PK
+        int property_id FK
+        int user_id FK
+        int agent_id FK
+        int rating
+        text review_text
+        enum review_type "property,agent"
+        boolean is_verified
+        datetime created_at
+        datetime updated_at
+    }
+
+    SAVED_SEARCHES {
+        int search_id PK
+        int user_id FK
+        string search_name
+        text search_criteria
+        boolean email_alerts
+        datetime created_at
+        datetime last_executed
+    }
+
+    NEIGHBORHOODS {
+        int neighborhood_id PK
+        string name
+        string city
+        string state
+        text description
+        decimal avg_price
+        text amenities
+        string image_url
+    }
+
+    PROPERTY_NEIGHBORHOOD {
+        int property_id FK
+        int neighborhood_id FK
+    }
+
+    BLOG_POSTS {
+        int post_id PK
+        int author_id FK
+        string title
+        text content
+        string featured_image
+        string slug UK
+        text meta_description
+        boolean published
+        datetime published_at
+        datetime created_at
+        datetime updated_at
+    }
+
+    BLOG_CATEGORIES {
+        int category_id PK
+        string category_name UK
+        string description
+        string slug UK
+    }
+
+    POST_CATEGORIES {
+        int post_id FK
+        int category_id FK
+    }
+
+    CONTACT_MESSAGES {
+        int message_id PK
+        string name
+        string email
+        string phone
+        string subject
+        text message
+        enum status "new,read,replied,archived"
+        datetime created_at
+        datetime replied_at
+    }
+
+    PROPERTIES ||--o{ CITIES : "located_in"
+
+    %% Relations
+    USERS ||--o{ AGENTS : "can_be"
+    USERS ||--o{ PROPERTIES : "owns/lists"
+    USERS ||--o{ FAVORITES : "saves"
+    USERS ||--o{ INQUIRIES : "makes"
+    USERS ||--o{ VIEWINGS : "requests"
+    USERS ||--o{ OFFERS : "submits"
+    USERS ||--o{ REVIEWS : "writes"
+    USERS ||--o{ SAVED_SEARCHES : "creates"
+    USERS ||--o{ BLOG_POSTS : "authors"
+
+    AGENTS ||--o{ PROPERTIES : "manages"
+    AGENTS ||--o{ VIEWINGS : "conducts"
+    AGENTS ||--o{ TRANSACTIONS : "facilitates"
+    AGENTS ||--o{ REVIEWS : "receives"
+
+    PROPERTIES ||--o{ PROPERTY_IMAGES : "has"
+    PROPERTIES ||--o{ PROPERTY_FEATURE_MAPPING : "has"
+    PROPERTIES ||--o{ FAVORITES : "is_favorited"
+    PROPERTIES ||--o{ INQUIRIES : "receives"
+    PROPERTIES ||--o{ VIEWINGS : "scheduled_for"
+    PROPERTIES ||--o{ OFFERS : "receives"
+    PROPERTIES ||--o{ TRANSACTIONS : "sold_in"
+    PROPERTIES ||--o{ REVIEWS : "reviewed_for"
+    PROPERTIES ||--o{ PROPERTY_NEIGHBORHOOD : "located_in"
+
+    PROPERTY_FEATURES ||--o{ PROPERTY_FEATURE_MAPPING : "mapped_to"
+    NEIGHBORHOODS ||--o{ PROPERTY_NEIGHBORHOOD : "contains"
+    BLOG_CATEGORIES ||--o{ POST_CATEGORIES : "categorizes"
+    BLOG_POSTS ||--o{ POST_CATEGORIES : "belongs_to"

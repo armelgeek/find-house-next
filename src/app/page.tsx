@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useLogin } from "@/shared/hooks/use-login";
+import Link from "next/link";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -34,32 +35,11 @@ export default function Home() {
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full max-w-xs">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="border rounded px-3 py-2"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Mot de passe"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="border rounded px-3 py-2"
-            required
-          />
-          <button
-            type="submit"
-            className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
-            disabled={isLoading}
-          >
-            {isLoading ? "Connexion..." : "Se connecter"}
-          </button>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-        </form>
+        <div>
+          <Link href="/login" className="text-blue-600 hover:underline">
+            Se connecter
+          </Link>
+        </div>
       )}
     </main>
   );

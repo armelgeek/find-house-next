@@ -1,0 +1,104 @@
+name: Deployment
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "20.x"
+
+      - name: Upload project via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          port: 22
+          source: "./"
+          target: "/var/www/${{ secrets.SUBDOMAIN }}/client/"
+          overwrite: true
+
+      - name: Execute remote commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          port: 22
+          script: |
+            export SUBDOMAIN=${{ secrets.SUBDOMAIN }}
+            export SUBDOMAIN_API=${{ secrets.SUBDOMAIN_API }}
+            export DOMAIN=${{ secrets.DOMAIN }}
+            export PORT=${{ secrets.PORT }}
+            export PORT_API=8055
+
+            # Déploiement Next.js (client)
+            cd /var/www/$SUBDOMAIN/client/
+            rm -rf node_modules yarn.lock package-lock.json tsconfig.json next-env.d.ts
+            rm -rf .next
+            rm -rf build
+            npm install --legacy-peer-deps
+            npm run build
+            pm2 restart $SUBDOMAIN || pm2 start npm --name $SUBDOMAIN -- run start
+
+
+            # Déploiement Directus (via Docker Compose)
+            cd /var/www/$SUBDOMAIN/database/
+            docker compose up -d --build
+
+
+
+            # Configuration Nginx pour Next.js (création si absent)
+            if [ ! -f /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf ]; then
+              sudo bash -c "cat > /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf <<EOF
+            server {
+              listen 80;
+              server_name $SUBDOMAIN.$DOMAIN;
+              location / {
+                proxy_pass http://localhost:$PORT;
+                proxy_set_header Host \$host;
+                proxy_set_header X-Real-IP \$remote_addr;
+                proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto \$scheme;
+              }
+            }
+            EOF"
+            fi
+
+            # Configuration Nginx pour Directus API (création si absent)
+            if [ ! -f /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf ]; then
+              sudo bash -c "cat > /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf <<EOF
+            server {
+              listen 80;
+              server_name $SUBDOMAIN_API.$DOMAIN;
+              location / {
+                proxy_pass http://localhost:$PORT_API;
+                proxy_set_header Host \$host;
+                proxy_set_header X-Real-IP \$remote_addr;
+                proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto \$scheme;
+              }
+            }
+            EOF"
+            fi
+
+            # Activation des sites
+            sudo ln -sf /etc/nginx/sites-available/$SUBDOMAIN.$DOMAIN.conf /etc/nginx/sites-enabled/
+            sudo ln -sf /etc/nginx/sites-available/$SUBDOMAIN_API.$DOMAIN.conf /etc/nginx/sites-enabled/
+            sudo systemctl reload nginx
+
+            # Certificats SSL automatiques (décommentez si nécessaire)
+            sudo certbot --nginx -d $SUBDOMAIN.$DOMAIN --non-interactive --agree-tos -m votremail@arvox.dev
+            sudo certbot --nginx -d $SUBDOMAIN_API.$DOMAIN --non-interactive --agree-tos -m votremail@arvox.dev
+            # Génération du certificat SSL (décommentez pour activer)
+            sudo certbot --nginx -d ${{ secrets.SUBDOMAIN }}.${{ secrets.DOMAIN }} --non-interactive --agree-tos -m votremail@arvox.dev

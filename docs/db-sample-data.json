@@ -1,0 +1,281 @@
+{
+  "CITIES": [
+    {
+      "city_id": 1,
+      "name": "Paris",
+      "state": "Île-de-France",
+      "country": "France",
+      "latitude": 48.8566,
+      "longitude": 2.3522,
+      "description": "Capitale de la France."
+    },
+    {
+      "city_id": 2,
+      "name": "Lyon",
+      "state": "Auvergne-Rhône-Alpes",
+      "country": "France",
+      "latitude": 45.75,
+      "longitude": 4.85,
+      "description": "Ville historique du sud-est de la France."
+    }
+  ],
+  "USERS": [
+    {
+      "user_id": 1,
+      "first_name": "Alice",
+      "last_name": "Martin",
+      "email": "alice@example.com",
+      "phone": "+33123456789",
+      "password_hash": "hash1",
+      "user_type": "buyer",
+      "bio": "Acheteuse passionnée.",
+      "profile_image": "alice.jpg",
+      "created_at": "2025-09-01T10:00:00Z",
+      "updated_at": "2025-09-01T10:00:00Z",
+      "is_active": true,
+      "last_login": "2025-09-06T09:00:00Z"
+    },
+    {
+      "user_id": 2,
+      "first_name": "Bob",
+      "last_name": "Durand",
+      "email": "bob@example.com",
+      "phone": "+33987654321",
+      "password_hash": "hash2",
+      "user_type": "agent",
+      "bio": "Agent immobilier.",
+      "profile_image": "bob.jpg",
+      "created_at": "2025-09-01T11:00:00Z",
+      "updated_at": "2025-09-01T11:00:00Z",
+      "is_active": true,
+      "last_login": "2025-09-06T08:00:00Z"
+    }
+  ],
+  "AGENTS": [
+    {
+      "agent_id": 1,
+      "user_id": 2,
+      "license_number": "AG12345",
+      "company_name": "ImmoPro",
+      "office_address": "10 rue de Lyon, Paris",
+      "office_phone": "+33111222333",
+      "specializations": "appartement,maison",
+      "commission_rate": 0.03,
+      "years_experience": 5,
+      "verified": true,
+      "verified_at": "2025-09-01T12:00:00Z"
+    }
+  ],
+  "PROPERTIES": [
+    {
+      "property_id": 1,
+      "agent_id": 1,
+      "city_id": 1,
+      "title": "Appartement lumineux Paris 12e",
+      "description": "Bel appartement de 3 pièces.",
+      "property_type": "apartment",
+      "listing_type": "sale",
+      "price": 550000,
+      "original_price": 570000,
+      "address": "12 rue de Reuilly",
+      "zip_code": "75012",
+      "state": "Île-de-France",
+      "country": "France",
+      "latitude": 48.8408,
+      "longitude": 2.3895,
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floor_area": 65,
+      "lot_size": 0,
+      "year_built": 1995,
+      "garage": false,
+      "garage_spaces": 0,
+      "pool": false,
+      "garden": false,
+      "furnished": true,
+      "amenities": "ascenseur,balcon",
+      "status": "active",
+      "listed_date": "2025-09-02T10:00:00Z",
+      "sold_date": null,
+      "views_count": 12,
+      "featured": true,
+      "created_at": "2025-09-02T10:00:00Z",
+      "updated_at": "2025-09-02T10:00:00Z"
+    }
+  ],
+  "PROPERTY_IMAGES": [
+    {
+      "image_id": 1,
+      "property_id": 1,
+      "image_url": "apt1-1.jpg",
+      "alt_text": "Salon lumineux",
+      "is_primary": true,
+      "sort_order": 1,
+      "uploaded_at": "2025-09-02T11:00:00Z"
+    }
+  ],
+  "FAVORITES": [
+    {
+      "favorite_id": 1,
+      "user_id": 1,
+      "property_id": 1,
+      "created_at": "2025-09-03T09:00:00Z"
+    }
+  ],
+  "INQUIRIES": [
+    {
+      "inquiry_id": 1,
+      "property_id": 1,
+      "user_id": 1,
+      "name": "Alice Martin",
+      "email": "alice@example.com",
+      "phone": "+33123456789",
+      "message": "Je souhaite visiter ce bien.",
+      "inquiry_type": "viewing",
+      "status": "new",
+      "inquiry_date": "2025-09-03T10:00:00Z",
+      "response_date": null
+    }
+  ],
+  "OFFERS": [
+    {
+      "offer_id": 1,
+      "property_id": 1,
+      "user_id": 1,
+      "offer_amount": 540000,
+      "terms": "Sous réserve d'obtention de prêt.",
+      "offer_date": "2025-09-04T10:00:00Z",
+      "expiry_date": "2025-09-10T10:00:00Z",
+      "status": "pending",
+      "agent_notes": "En attente de validation.",
+      "response_date": null
+    }
+  ],
+  "TRANSACTIONS": [
+    {
+      "transaction_id": 1,
+      "property_id": 1,
+      "buyer_id": 1,
+      "seller_id": 2,
+      "agent_id": 1,
+      "final_price": 540000,
+      "commission_amount": 16200,
+      "transaction_date": "2025-09-15T10:00:00Z",
+      "closing_date": "2025-09-30T10:00:00Z",
+      "payment_method": "mortgage",
+      "notes": "Transaction finalisée.",
+      "status": "completed"
+    }
+  ],
+  "PROPERTY_FEATURES": [
+    {
+      "feature_id": 1,
+      "feature_name": "Ascenseur",
+      "feature_icon": "elevator.svg",
+      "is_active": true
+    },
+    {
+      "feature_id": 2,
+      "feature_name": "Balcon",
+      "feature_icon": "balcony.svg",
+      "is_active": true
+    }
+  ],
+  "PROPERTY_FEATURE_MAPPING": [
+    {
+      "property_id": 1,
+      "feature_id": 1,
+      "feature_value": "Oui"
+    },
+    {
+      "property_id": 1,
+      "feature_id": 2,
+      "feature_value": "Oui"
+    }
+  ],
+  "REVIEWS": [
+    {
+      "review_id": 1,
+      "property_id": 1,
+      "user_id": 1,
+      "agent_id": 1,
+      "rating": 5,
+      "review_text": "Super expérience, agent très pro !",
+      "review_type": "property",
+      "is_verified": true,
+      "created_at": "2025-09-05T10:00:00Z",
+      "updated_at": "2025-09-05T10:00:00Z"
+    }
+  ],
+  "SAVED_SEARCHES": [
+    {
+      "search_id": 1,
+      "user_id": 1,
+      "search_name": "Appartements Paris",
+      "search_criteria": "{\"city_id\":1,\"property_type\":\"apartment\"}",
+      "email_alerts": true,
+      "created_at": "2025-09-01T12:00:00Z",
+      "last_executed": "2025-09-06T10:00:00Z"
+    }
+  ],
+  "NEIGHBORHOODS": [
+    {
+      "neighborhood_id": 1,
+      "name": "Bercy",
+      "city": "Paris",
+      "state": "Île-de-France",
+      "description": "Quartier dynamique du 12e arrondissement.",
+      "avg_price": 600000,
+      "amenities": "parc,commerces,transports",
+      "image_url": "bercy.jpg"
+    }
+  ],
+  "PROPERTY_NEIGHBORHOOD": [
+    {
+      "property_id": 1,
+      "neighborhood_id": 1
+    }
+  ],
+  "BLOG_POSTS": [
+    {
+      "post_id": 1,
+      "author_id": 2,
+      "title": "Tendances immobilières 2025",
+      "content": "Le marché immobilier évolue...",
+      "featured_image": "tendance2025.jpg",
+      "slug": "tendances-immobilieres-2025",
+      "meta_description": "Analyse des tendances immobilières pour 2025.",
+      "published": true,
+      "published_at": "2025-09-01T13:00:00Z",
+      "created_at": "2025-09-01T12:30:00Z",
+      "updated_at": "2025-09-01T13:00:00Z"
+    }
+  ],
+  "BLOG_CATEGORIES": [
+    {
+      "category_id": 1,
+      "category_name": "Marché",
+      "description": "Actualités du marché immobilier.",
+      "slug": "marche"
+    }
+  ],
+  "POST_CATEGORIES": [
+    {
+      "post_id": 1,
+      "category_id": 1
+    }
+  ],
+  "CONTACT_MESSAGES": [
+    {
+      "message_id": 1,
+      "name": "Jean Dupont",
+      "email": "jean.dupont@example.com",
+      "phone": "+33612345678",
+      "subject": "Demande d'information",
+      "message": "Bonjour, je souhaite plus d'informations sur l'appartement.",
+      "status": "new",
+      "created_at": "2025-09-06T11:00:00Z",
+      "replied_at": null
+    }
+  ]
+}
